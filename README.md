@@ -3,10 +3,15 @@
 UnrealNode是一个在Unreal UBT的基础上实现的一个类似Node.js的运行架构（可以看做一个node.js在图形学领域的一个变种）
 
 特性：
+
 1. 兼容nodejs(纯js库可以直接用，c+库使用upm编译)
+
 2. 内置unreal对象
+
 3. 预置常用c++组件（多为图形处理相关）
+
 4. 原生支持ts
+
 5. 支持用blueprint写逻辑
 
 
