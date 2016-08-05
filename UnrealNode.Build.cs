@@ -12,21 +12,28 @@ public class UnrealNode : ModuleRules
 
 		PrivateIncludePaths.Add("Runtime/Launch/Private");      // For LaunchEngineLoop.cpp include
 
+        
+        PrivateDependencyModuleNames.Add("Core");
+		PrivateDependencyModuleNames.Add("Projects");
+        
+        //v8
         PrivateIncludePaths.AddRange(new string[]
         {
             Path.Combine(ThirdPartyPath, "v8", "include"),
             Path.Combine(ThirdPartyPath, "v8"),
-            Path.Combine("V8", "Private")
         });
 
-        PublicIncludePaths.AddRange(new string[]
-        {
-            Path.Combine("V8", "Public")
-        });
-
-        PrivateDependencyModuleNames.Add("Core");
-		PrivateDependencyModuleNames.Add("Projects");
         LoadV8(Target);
+
+        //libuv
+        PrivateIncludePaths.AddRange(new string[]
+        {
+            Path.Combine(ThirdPartyPath, "libuv", "include"),
+            Path.Combine(ThirdPartyPath, "libuv"),
+        });
+
+
+        LoadUV(Target);
     }
 
 
@@ -85,8 +92,42 @@ public class UnrealNode : ModuleRules
             Definitions.Add(string.Format("WITH_JSWEBSOCKET=0"));
 
         }
+        return isLibrarySupported;
+    }
+    
+    public bool LoadUV(TargetInfo Target)
+    {
 
+        bool isLibrarySupported = false;
+        if ((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32))
+        {
+            isLibrarySupported = true;
 
+            string LibrariesPath = Path.Combine(ThirdPartyPath, "libuv", "lib");
+
+            if (Target.Platform == UnrealTargetPlatform.Win64)
+            {
+                LibrariesPath = Path.Combine(LibrariesPath, "Win64");
+            }
+            else
+            {
+                LibrariesPath = Path.Combine(LibrariesPath, "Win32");
+            }
+
+            if (Target.Configuration == UnrealTargetConfiguration.Debug)
+            {
+                LibrariesPath = Path.Combine(LibrariesPath, "Debug");
+            }
+            else
+            {
+                LibrariesPath = Path.Combine(LibrariesPath, "Release");
+            }
+            PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "libuv.lib"));
+
+        }
+        
+
+        //Definitions.Add(string.Format("WITH_BOBS_MAGIC_BINDING={0}", isLibrarySupported ? 1 : 0));  
 
         return isLibrarySupported;
     }
